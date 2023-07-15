@@ -3,6 +3,7 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 
 
+
 const Books = () => {
     const [books, setBooks] = useState([])
     useEffect(function () {
@@ -31,8 +32,9 @@ const Books = () => {
         <div className="">
             <div>
                 {books.map((book) => (
-                    <div>{book.title} {book.desc}
-                        {book.cover && <img src={book.cover} />}
+                    <div key={book.id}>{book.title} {book.desc}
+                        {console.log(book.cover)}
+                        {book.cover && <img src={`../images/${book.cover}`} />}
                         {book.price}
                         <button onClick={() => handleDelete(book.id)}>Delete</button>
                         <button><Link to={`/update/${book.id}`}>Update</Link></button>

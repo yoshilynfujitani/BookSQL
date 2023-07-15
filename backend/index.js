@@ -1,8 +1,23 @@
 import express from "express"
 import mysql from "mysql"
 import cors from "cors"
+import multer from "multer"
+import path from "path"
+
 
 const app = express()
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "../client/images")
+    },
+    filename: (req, file, cb) => {
+        console.log(file)
+
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+})
+
+const upload = multer({ storage })
 
 
 //ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
@@ -30,15 +45,18 @@ app.get("/books", (req, res) => {
     })
 })
 
-app.post("/books", (req, res) => {
-    const query = "INSERT INTO books (`title`, `desc`, `cover`, `price`) VALUES (?)"
-    const values = [req.body.title, req.body.desc, req.body.cover, req.body.price]
+app.post("/books", upload.single("cover"), (req, res) => {
+    const query = "INSERT INTO books (`title`, `desc`, `cover`, `price`) VALUES ?";
+    const values = [[req.body.title, req.body.desc, req.file.filename, req.body.price]];
 
     db.query(query, [values], (err, data) => {
-        if (err) return res.json(err)
-        return res.json("Book has been created succesfully")
-    })
-})
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error creating book" });
+        }
+        return res.json("Book has been created successfully");
+    });
+});
 
 app.delete("/books/:id", (req, res) => {
     const bookId = req.params.id;
