@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { deleteBook } from "./bookSlice";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import UpdateBook from "./UpdateBook";
 
 const BookItem = ({ book }) => {
   const { title, desc, cover, id, price } = book;

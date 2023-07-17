@@ -29,7 +29,11 @@ const db = mysql.createConnection({
 
 app.use(express.json()); // Allows us to send json files from client
 
-app.use(cors());
+app.use(
+  cors({
+    methods: ["GET", "POST", "PATCH", "DELETE"], // Add PATCH method
+  })
+);
 
 app.get("/", (req, res) => {
   res.json("Hello this is the backend");
@@ -69,7 +73,7 @@ app.delete("/books/:id", (req, res) => {
   });
 });
 
-app.patch("/books/:id", (req, res) => {
+app.patch("/books/:id", upload.single("cover"), (req, res) => {
   const bookId = req.params.id;
   const q =
     "UPDATE books SET `title`= ?, `desc`= ?, `price`= ?, `cover`= ? WHERE id = ?";
@@ -78,12 +82,12 @@ app.patch("/books/:id", (req, res) => {
     req.body.title,
     req.body.desc,
     req.body.price,
-    req.body.cover,
+    req.file.filename,
   ];
 
   db.query(q, [...values, bookId], (err, data) => {
     if (err) return res.send(err);
-    return res.json(data);
+    return res.json("Book has been updated succesfully");
   });
 });
 

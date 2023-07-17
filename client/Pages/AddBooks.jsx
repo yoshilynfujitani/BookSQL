@@ -15,11 +15,7 @@ const AddBooks = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
-      title,
-      desc,
-      price,
-    };
+
     const dbformData = {
       title,
       desc,
